@@ -147,7 +147,7 @@
         <article id="ticket" class="ticket">
           <div class="ticket-topline">
             <span>ANNIVERSARY TICKET</span>
-            <span>No. 02</span>
+            <span id="ticketNumber">No. 01</span>
           </div>
           <div id="prizeIcon" class="prize-icon" aria-hidden="true">⚾</div>
           <p class="ticket-small">SPECIAL PRESENT FOR</p>
@@ -164,9 +164,61 @@
         <p id="remainingCoinText" class="remaining-coin-text">残りコイン：2枚</p>
 
         <div class="result-actions">
-          <button id="againButton" class="secondary-button" type="button">コインを使ってもう一回</button>
-          <button id="memoryButton" class="primary-button" type="button">
-            最後のメッセージへ
+          <button id="againButton" class="secondary-button" type="button">次のガチャを回す</button>
+          <button id="memoryButton" class="primary-button hidden" type="button">
+            ガチャ結果を選ぶ
+            <span aria-hidden="true">→</span>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <section id="selectionScreen" class="screen" aria-labelledby="selectionTitle">
+      <div class="selection-wrap">
+        <div class="glass-card selection-card-wrap">
+          <p class="eyebrow">FINAL CHOICE</p>
+          <h2 id="selectionTitle">最後にどの券にする？</h2>
+          <p class="selection-lead">回した分の結果を並べたよ。好きな1枚を選んでね。</p>
+          <div id="selectionCards" class="selection-grid"></div>
+          <p id="selectionHint" class="selection-hint">カードをタップして選択してね。</p>
+          <div class="selection-actions">
+            <button id="confirmSelectionButton" class="primary-button" type="button" disabled>
+              この券に決定する
+              <span aria-hidden="true">→</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="scheduleScreen" class="screen" aria-labelledby="scheduleTitle">
+      <div class="glass-card schedule-card">
+        <p class="eyebrow">DATE SCHEDULE</p>
+        <div class="schedule-icon" aria-hidden="true">🗓️</div>
+        <h2 id="scheduleTitle">いつデートする？</h2>
+        <p class="schedule-lead">
+          選んだデート券を使う日を、カレンダーから決めてね。
+        </p>
+
+        <div class="chosen-prize-summary">
+          <span id="schedulePrizeIcon" class="chosen-prize-icon" aria-hidden="true">⚾</span>
+          <div>
+            <span>SELECTED TICKET</span>
+            <strong id="schedulePrizeTitle">野球観戦券</strong>
+          </div>
+        </div>
+
+        <label class="date-field" for="datePicker">
+          <span>デート日</span>
+          <input id="datePicker" type="date" />
+        </label>
+
+        <p id="datePreview" class="date-preview">カレンダーから日付を選んでね。</p>
+
+        <div class="schedule-actions">
+          <button id="backToSelectionButton" class="secondary-button" type="button">ガチャ結果を選び直す</button>
+          <button id="confirmDateButton" class="primary-button" type="button" disabled>
+            この日で決定する
             <span aria-hidden="true">→</span>
           </button>
         </div>
@@ -177,21 +229,56 @@
       <div class="glass-card final-card">
         <div id="finalHeart" class="final-heart" aria-hidden="true">♡</div>
         <p class="eyebrow">THANK YOU FOR TWO MONTHS</p>
-        <h2 id="finalTitle">なーちゃんへ</h2>
-        <p class="final-message">
-          2ヶ月ありがとう。<br />
-          これからもいっぱい思い出作ろうね。
-        </p>
-        <p class="final-submessage">
-          まだ2ヶ月、もう2ヶ月。<br />
-          これから先も、ずっとよろしくな。
-        </p>
-        <p class="love-sign">大好きやで ♡</p>
-        <button id="restartButton" class="secondary-button" type="button">最初から見る</button>
+        <h2 id="finalTitle">選んだデート券はこちら</h2>
+        <p id="finalChosenLabel" class="final-chosen-label">なーちゃんが選んだ1枚♡</p>
+
+        <div id="shareCaptureCard" class="capture-frame">
+          <article class="ticket final-ticket">
+            <div class="ticket-topline">
+              <span>ANNIVERSARY TICKET</span>
+              <span>No. FINAL</span>
+            </div>
+            <div id="finalPrizeIcon" class="prize-icon" aria-hidden="true">⚾</div>
+            <p class="ticket-small">CHOSEN PRESENT FOR</p>
+            <h3 id="finalPrizeTitle">野球観戦券</h3>
+            <p id="finalPrizeDescription" class="prize-description">
+              一緒に野球観戦へ。好きな球場と試合を選んで行こう。
+            </p>
+            <div class="ticket-signature">
+              <span>FROM</span>
+              <strong>たくと</strong>
+            </div>
+          </article>
+
+          <div class="chosen-date-box">
+            <span>DATE</span>
+            <strong id="finalDateText">2026年7月20日（月）</strong>
+          </div>
+
+          <div class="share-note-box">
+            <p class="final-message">
+              2ヶ月ありがとう。<br />
+              これからもいっぱい思い出作ろうね。
+            </p>
+            <p class="final-submessage">
+              まだ2ヶ月、もう2ヶ月。<br />
+              これから先も、ずっとよろしくな。
+            </p>
+            <p class="love-sign">大好きやで ♡</p>
+          </div>
+        </div>
+
+        <div class="share-actions">
+          <button id="saveImageButton" class="primary-button" type="button">画像を保存する</button>
+          <button id="shareLineButton" class="secondary-button" type="button">LINEで共有する</button>
+        </div>
+        <p id="shareHelpText" class="share-help-text">スマホではそのまま共有、PCでは画像保存してから送るのがおすすめ。</p>
+        <button id="restartButton" class="secondary-button restart-button" type="button">最初から見る</button>
       </div>
     </section>
   </main>
 
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
   <script src="script.js"></script>
 </body>
 </html>

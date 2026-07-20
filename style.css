@@ -1042,3 +1042,247 @@ button:focus-visible {
     border-radius: 26px;
   }
 }
+
+
+.selection-wrap {
+  width: min(100%, 760px);
+}
+
+.selection-card-wrap {
+  width: min(100%, 760px);
+}
+
+.selection-lead {
+  margin: 0 0 22px;
+  color: var(--muted);
+  line-height: 1.8;
+}
+
+.selection-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+  margin-top: 22px;
+}
+
+.selection-item {
+  display: grid;
+  gap: 10px;
+  width: 100%;
+  padding: 18px 16px;
+  text-align: left;
+  color: var(--white);
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 22px;
+  cursor: pointer;
+  transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease, background 0.25s ease;
+}
+
+.selection-item:hover {
+  transform: translateY(-4px);
+  border-color: rgba(255, 209, 227, 0.45);
+}
+
+.selection-item.selected {
+  background: linear-gradient(145deg, rgba(255, 120, 174, 0.16), rgba(185, 156, 255, 0.14));
+  border-color: rgba(255, 209, 227, 0.7);
+  box-shadow: 0 14px 36px rgba(0, 0, 0, 0.22);
+}
+
+.selection-order {
+  font-size: 0.78rem;
+  letter-spacing: 0.12em;
+  color: var(--gold);
+}
+
+.selection-icon {
+  font-size: 2rem;
+}
+
+.selection-title {
+  font-size: 1rem;
+  line-height: 1.5;
+}
+
+.selection-description {
+  font-size: 0.92rem;
+  color: var(--muted);
+  line-height: 1.7;
+}
+
+.selection-hint {
+  margin: 18px 0 0;
+  color: var(--pink-light);
+  min-height: 1.8em;
+}
+
+.selection-actions {
+  margin-top: 24px;
+}
+
+.final-chosen-label {
+  margin: 4px 0 24px;
+  color: var(--pink-light);
+  line-height: 1.8;
+}
+
+.capture-frame {
+  width: min(100%, 460px);
+  margin: 0 auto;
+  padding: 22px 18px;
+  border-radius: 30px;
+  background:
+    radial-gradient(circle at top, rgba(255, 255, 255, 0.1), transparent 48%),
+    linear-gradient(155deg, rgba(255, 120, 174, 0.12), rgba(185, 156, 255, 0.08));
+  border: 1px solid rgba(255, 255, 255, 0.14);
+}
+
+.final-ticket {
+  margin-bottom: 16px;
+}
+
+.share-note-box {
+  padding: 6px 8px 0;
+}
+
+.share-actions {
+  display: grid;
+  gap: 12px;
+  width: min(100%, 460px);
+  margin: 24px auto 0;
+}
+
+.share-help-text {
+  margin: 14px auto 0;
+  width: min(100%, 460px);
+  color: var(--muted);
+  line-height: 1.7;
+}
+
+.restart-button {
+  margin-top: 18px;
+}
+
+@media (max-width: 640px) {
+  .selection-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .capture-frame {
+    padding: 18px 14px;
+    border-radius: 24px;
+  }
+}
+
+.schedule-card {
+  width: min(100%, 560px);
+}
+
+.schedule-icon {
+  margin: 12px 0 4px;
+  font-size: clamp(3rem, 10vw, 4.5rem);
+  filter: drop-shadow(0 10px 24px rgba(0, 0, 0, 0.22));
+}
+
+.schedule-lead {
+  margin: 10px 0 24px;
+  color: var(--muted);
+  line-height: 1.8;
+}
+
+.chosen-prize-summary {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  width: 100%;
+  margin: 0 auto 24px;
+  padding: 16px 18px;
+  text-align: left;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.chosen-prize-icon {
+  flex: 0 0 auto;
+  font-size: 2rem;
+}
+
+.chosen-prize-summary div {
+  display: grid;
+  gap: 4px;
+}
+
+.chosen-prize-summary span:not(.chosen-prize-icon) {
+  color: var(--gold);
+  font-size: 0.72rem;
+  letter-spacing: 0.12em;
+}
+
+.chosen-prize-summary strong {
+  line-height: 1.5;
+}
+
+.date-field {
+  display: grid;
+  gap: 10px;
+  text-align: left;
+}
+
+.date-field > span {
+  color: var(--pink-light);
+  font-weight: 700;
+}
+
+.date-field input {
+  width: 100%;
+  min-height: 58px;
+  padding: 0 16px;
+  color: var(--white);
+  color-scheme: dark;
+  font: inherit;
+  font-weight: 700;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.date-field input:focus {
+  outline: 3px solid rgba(255, 209, 227, 0.28);
+  border-color: rgba(255, 209, 227, 0.65);
+}
+
+.date-preview {
+  min-height: 1.8em;
+  margin: 16px 0 0;
+  color: var(--pink-light);
+  line-height: 1.7;
+}
+
+.schedule-actions {
+  display: grid;
+  gap: 12px;
+  margin-top: 24px;
+}
+
+.chosen-date-box {
+  display: grid;
+  gap: 4px;
+  margin: 0 0 16px;
+  padding: 15px 16px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.07);
+}
+
+.chosen-date-box span {
+  color: var(--gold);
+  font-size: 0.74rem;
+  letter-spacing: 0.14em;
+}
+
+.chosen-date-box strong {
+  color: var(--white);
+  font-size: 1.08rem;
+}

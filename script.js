@@ -61,6 +61,8 @@ const screens = {
   quizResult: document.getElementById("quizResultScreen"),
   gacha: document.getElementById("gachaScreen"),
   result: document.getElementById("resultScreen"),
+  selection: document.getElementById("selectionScreen"),
+  schedule: document.getElementById("scheduleScreen"),
   final: document.getElementById("finalScreen")
 };
 
@@ -82,6 +84,7 @@ const gachaMachine = document.getElementById("gachaMachine");
 const gachaCoinCount = document.getElementById("gachaCoinCount");
 const gachaStatus = document.getElementById("gachaStatus");
 const dropCapsule = document.getElementById("dropCapsule");
+const ticketNumber = document.getElementById("ticketNumber");
 const ticket = document.getElementById("ticket");
 const prizeIcon = document.getElementById("prizeIcon");
 const prizeTitle = document.getElementById("prizeTitle");
@@ -89,6 +92,24 @@ const prizeDescription = document.getElementById("prizeDescription");
 const remainingCoinText = document.getElementById("remainingCoinText");
 const againButton = document.getElementById("againButton");
 const memoryButton = document.getElementById("memoryButton");
+const selectionCards = document.getElementById("selectionCards");
+const selectionHint = document.getElementById("selectionHint");
+const confirmSelectionButton = document.getElementById("confirmSelectionButton");
+const schedulePrizeIcon = document.getElementById("schedulePrizeIcon");
+const schedulePrizeTitle = document.getElementById("schedulePrizeTitle");
+const datePicker = document.getElementById("datePicker");
+const datePreview = document.getElementById("datePreview");
+const backToSelectionButton = document.getElementById("backToSelectionButton");
+const confirmDateButton = document.getElementById("confirmDateButton");
+const finalChosenLabel = document.getElementById("finalChosenLabel");
+const finalPrizeIcon = document.getElementById("finalPrizeIcon");
+const finalPrizeTitle = document.getElementById("finalPrizeTitle");
+const finalPrizeDescription = document.getElementById("finalPrizeDescription");
+const finalDateText = document.getElementById("finalDateText");
+const saveImageButton = document.getElementById("saveImageButton");
+const shareLineButton = document.getElementById("shareLineButton");
+const shareHelpText = document.getElementById("shareHelpText");
+const shareCaptureCard = document.getElementById("shareCaptureCard");
 const restartButton = document.getElementById("restartButton");
 const sparkleLayer = document.getElementById("sparkleLayer");
 
@@ -97,7 +118,9 @@ let correctAnswers = 0;
 let coins = 0;
 let answeredCurrentQuiz = false;
 let isDrawing = false;
-let lastPrizeIndex = -1;
+let drawnPrizeIndices = [];
+let selectedPrizeIndex = null;
+let selectedDate = "";
 
 function showScreen(targetName) {
   Object.values(screens).forEach((screen) => screen.classList.remove("active"));
@@ -133,9 +156,9 @@ function renderQuiz() {
   quizFeedback.textContent = "";
   quizFeedback.className = "quiz-feedback";
   nextQuestionButton.classList.add("hidden");
-  nextQuestionButton.firstChild.textContent = currentQuizIndex === quizzes.length - 1
-    ? "結果を見る"
-    : "次の問題へ";
+  nextQuestionButton.innerHTML = currentQuizIndex === quizzes.length - 1
+    ? '結果を見る <span aria-hidden="true">→</span>'
+    : '次の問題へ <span aria-hidden="true">→</span>';
   quizChoices.innerHTML = "";
   quizCard.classList.remove("quiz-pop");
   void quizCard.offsetWidth;
@@ -189,7 +212,7 @@ function showQuizResult() {
   earnedCoinCount.textContent = String(coins);
 
   if (coins > 0) {
-    quizResultMessage.textContent = `ガチャを${coins}回まわせるで！どの券が出るかお楽しみ♡`;
+    quizResultMessage.textContent = `ガチャを${coins}回まわせるで！同じ結果は出ない仕様にしてるから安心や♡`;
     goGachaButton.classList.remove("hidden");
     retryQuizButton.classList.add("hidden");
     createSparkles(34);
@@ -206,6 +229,10 @@ function resetQuiz() {
   currentQuizIndex = 0;
   correctAnswers = 0;
   coins = 0;
+  drawnPrizeIndices = [];
+  selectedPrizeIndex = null;
+  selectedDate = "";
+  isDrawing = false;
   quizCoinCount.textContent = "0";
   renderQuiz();
 }
@@ -215,28 +242,29 @@ function updateGachaCoinDisplay() {
   handleButton.disabled = isDrawing || coins <= 0;
 
   if (coins <= 0 && !isDrawing) {
-    gachaStatus.textContent = "コインを使い切りました";
+    gachaStatus.textContent = "コインを使い切ったよ。結果を確認してね";
   } else if (!isDrawing) {
     gachaStatus.textContent = "コインを1枚使います";
   }
 }
 
 function getRandomPrizeIndex() {
-  if (prizes.length === 1) return 0;
+  const availablePrizeIndices = prizes
+    .map((_, index) => index)
+    .filter((index) => !drawnPrizeIndices.includes(index));
 
-  let nextIndex;
-  do {
-    nextIndex = Math.floor(Math.random() * prizes.length);
-  } while (nextIndex === lastPrizeIndex);
+  if (availablePrizeIndices.length === 0) {
+    return 0;
+  }
 
-  lastPrizeIndex = nextIndex;
-  return nextIndex;
+  const randomIndex = Math.floor(Math.random() * availablePrizeIndices.length);
+  return availablePrizeIndices[randomIndex];
 }
 
-function updatePrize(prize) {
-  prizeIcon.textContent = prize.icon;
-  prizeTitle.textContent = prize.title;
-  prizeDescription.textContent = prize.description;
+function renderTicketParts(iconElement, titleElement, descriptionElement, prize) {
+  iconElement.textContent = prize.icon;
+  titleElement.textContent = prize.title;
+  descriptionElement.textContent = prize.description;
 }
 
 function resetGachaAnimation() {
@@ -247,14 +275,19 @@ function resetGachaAnimation() {
 }
 
 function updateResultActions() {
-  remainingCoinText.textContent = coins > 0
-    ? `残りコイン：${coins}枚（あと${coins}回まわせるで）`
-    : "ガチャコインをすべて使いました";
+  const drawCount = drawnPrizeIndices.length;
+  ticketNumber.textContent = `No. 0${drawCount}`;
 
-  againButton.classList.toggle("hidden", coins <= 0);
-  memoryButton.innerHTML = coins > 0
-    ? 'ガチャを終えてメッセージへ <span aria-hidden="true">→</span>'
-    : '最後のメッセージへ <span aria-hidden="true">→</span>';
+  if (coins > 0) {
+    remainingCoinText.textContent = `残りコイン：${coins}枚（同じ結果はもう出ないで）`;
+    againButton.classList.remove("hidden");
+    memoryButton.classList.add("hidden");
+  } else {
+    remainingCoinText.textContent = `全${drawCount}枚の結果がそろったよ。最後に好きな1枚を選んでね。`;
+    againButton.classList.add("hidden");
+    memoryButton.classList.remove("hidden");
+    memoryButton.innerHTML = 'ガチャ結果を選ぶ <span aria-hidden="true">→</span>';
+  }
 }
 
 function drawGacha() {
@@ -266,7 +299,8 @@ function drawGacha() {
   gachaStatus.textContent = "NOW DRAWING...";
   resetGachaAnimation();
 
-  const prize = prizes[getRandomPrizeIndex()];
+  const prizeIndex = getRandomPrizeIndex();
+  const prize = prizes[prizeIndex];
 
   handleButton.classList.add("turning");
   gachaMachine.classList.add("shaking");
@@ -277,7 +311,10 @@ function drawGacha() {
   }, 650);
 
   window.setTimeout(() => {
-    updatePrize(prize);
+    if (!drawnPrizeIndices.includes(prizeIndex)) {
+      drawnPrizeIndices.push(prizeIndex);
+    }
+    renderTicketParts(prizeIcon, prizeTitle, prizeDescription, prize);
     updateResultActions();
     ticket.classList.remove("reveal");
     void ticket.offsetWidth;
@@ -287,6 +324,167 @@ function drawGacha() {
     isDrawing = false;
     updateGachaCoinDisplay();
   }, 1900);
+}
+
+function renderSelectionCards() {
+  selectionCards.innerHTML = "";
+
+  drawnPrizeIndices.forEach((prizeIndex, index) => {
+    const prize = prizes[prizeIndex];
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = `selection-item${selectedPrizeIndex === prizeIndex ? " selected" : ""}`;
+    button.setAttribute("aria-pressed", selectedPrizeIndex === prizeIndex ? "true" : "false");
+    button.innerHTML = `
+      <span class="selection-order">RESULT ${index + 1}</span>
+      <span class="selection-icon" aria-hidden="true">${prize.icon}</span>
+      <strong class="selection-title">${prize.title}</strong>
+      <span class="selection-description">${prize.description}</span>
+    `;
+    button.addEventListener("click", () => {
+      selectedPrizeIndex = prizeIndex;
+      renderSelectionCards();
+      selectionHint.textContent = `「${prize.title}」を選択中♡`;
+      confirmSelectionButton.disabled = false;
+    });
+    selectionCards.appendChild(button);
+  });
+
+  if (selectedPrizeIndex === null) {
+    selectionHint.textContent = "カードをタップして選択してね。";
+    confirmSelectionButton.disabled = true;
+  }
+}
+
+function openSelectionScreen() {
+  selectedPrizeIndex = null;
+  renderSelectionCards();
+  showScreen("selection");
+}
+
+function formatDateForDisplay(dateValue) {
+  if (!dateValue) return "";
+
+  const [year, month, day] = dateValue.split("-").map(Number);
+  const date = new Date(year, month - 1, day);
+  return new Intl.DateTimeFormat("ja-JP", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+    weekday: "short"
+  }).format(date);
+}
+
+function getTodayLocalDateString() {
+  const today = new Date();
+  const year = today.getFullYear();
+  const month = String(today.getMonth() + 1).padStart(2, "0");
+  const day = String(today.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+}
+
+function openScheduleScreen() {
+  const prize = prizes[selectedPrizeIndex];
+  schedulePrizeIcon.textContent = prize.icon;
+  schedulePrizeTitle.textContent = prize.title;
+  datePicker.min = getTodayLocalDateString();
+  datePicker.value = selectedDate;
+  datePreview.textContent = selectedDate
+    ? `${formatDateForDisplay(selectedDate)}にデート予定♡`
+    : "カレンダーから日付を選んでね。";
+  confirmDateButton.disabled = !selectedDate;
+  showScreen("schedule");
+}
+
+function prepareFinalScreen() {
+  const prize = prizes[selectedPrizeIndex];
+  renderTicketParts(finalPrizeIcon, finalPrizeTitle, finalPrizeDescription, prize);
+  finalChosenLabel.textContent = `なーちゃんが選んだ1枚は「${prize.title}」♡`;
+  finalDateText.textContent = formatDateForDisplay(selectedDate);
+  shareHelpText.textContent = "スマホではそのまま共有、PCでは画像保存してからLINEで送るのがおすすめ。";
+  showScreen("final");
+  createSparkles(46);
+}
+
+async function buildShareBlob() {
+  const canvas = await html2canvas(shareCaptureCard, {
+    backgroundColor: null,
+    scale: 2,
+    useCORS: true
+  });
+
+  return new Promise((resolve, reject) => {
+    canvas.toBlob((blob) => {
+      if (blob) {
+        resolve(blob);
+      } else {
+        reject(new Error("画像の生成に失敗しました"));
+      }
+    }, "image/png");
+  });
+}
+
+async function downloadShareImage() {
+  try {
+    const blob = await buildShareBlob();
+    const prize = prizes[selectedPrizeIndex];
+    const safeTitle = prize.title.replace(/[\\/:*?"<>|（）\s]/g, "-");
+    const url = URL.createObjectURL(blob);
+    const anchor = document.createElement("a");
+    anchor.href = url;
+    anchor.download = `2month-anniversary-${safeTitle}.png`;
+    document.body.appendChild(anchor);
+    anchor.click();
+    anchor.remove();
+    URL.revokeObjectURL(url);
+    shareHelpText.textContent = "画像を保存したで！そのままLINEに添付して送れるよ。";
+  } catch (error) {
+    console.error(error);
+    shareHelpText.textContent = "画像の保存に失敗しました。もう一度試してみてね。";
+  }
+}
+
+async function shareToLine() {
+  if (selectedPrizeIndex === null) return;
+
+  const prize = prizes[selectedPrizeIndex];
+  const shareText = `2ヶ月記念で選んだのは「${prize.title}」♡ デート日は${formatDateForDisplay(selectedDate)}！`;
+
+  try {
+    const blob = await buildShareBlob();
+    const file = new File([blob], "2month-anniversary-ticket.png", { type: "image/png" });
+
+    if (navigator.canShare && navigator.canShare({ files: [file] })) {
+      await navigator.share({
+        files: [file],
+        title: "2ヶ月記念ガチャ",
+        text: shareText
+      });
+      shareHelpText.textContent = "共有シートを開いたで。LINEを選べばそのまま送れるはず！";
+      return;
+    }
+
+    await downloadShareImage();
+    const lineUrl = `https://social-plugins.line.me/lineit/share?url=${encodeURIComponent(location.href)}`;
+    window.open(lineUrl, "_blank", "noopener");
+    shareHelpText.textContent = "画像を保存したで。開いたLINE画面で、保存した画像を添付して送ってね。";
+  } catch (error) {
+    console.error(error);
+    shareHelpText.textContent = "共有に失敗しました。画像保存してからLINEで送ってみてな。";
+  }
+}
+
+function resetExperience() {
+  currentQuizIndex = 0;
+  correctAnswers = 0;
+  coins = 0;
+  answeredCurrentQuiz = false;
+  isDrawing = false;
+  drawnPrizeIndices = [];
+  selectedPrizeIndex = null;
+  selectedDate = "";
+  resetGachaAnimation();
+  showScreen("opening");
 }
 
 startButton.addEventListener("click", () => {
@@ -330,16 +528,32 @@ againButton.addEventListener("click", () => {
 });
 
 memoryButton.addEventListener("click", () => {
-  showScreen("final");
-  createSparkles(46);
+  openSelectionScreen();
 });
 
-restartButton.addEventListener("click", () => {
-  currentQuizIndex = 0;
-  correctAnswers = 0;
-  coins = 0;
-  isDrawing = false;
-  lastPrizeIndex = -1;
-  resetGachaAnimation();
-  showScreen("opening");
+confirmSelectionButton.addEventListener("click", () => {
+  if (selectedPrizeIndex === null) return;
+  openScheduleScreen();
 });
+
+datePicker.addEventListener("change", () => {
+  selectedDate = datePicker.value;
+  confirmDateButton.disabled = !selectedDate;
+  datePreview.textContent = selectedDate
+    ? `${formatDateForDisplay(selectedDate)}にデート予定♡`
+    : "カレンダーから日付を選んでね。";
+});
+
+backToSelectionButton.addEventListener("click", () => {
+  renderSelectionCards();
+  showScreen("selection");
+});
+
+confirmDateButton.addEventListener("click", () => {
+  if (!selectedDate) return;
+  prepareFinalScreen();
+});
+
+saveImageButton.addEventListener("click", downloadShareImage);
+shareLineButton.addEventListener("click", shareToLine);
+restartButton.addEventListener("click", resetExperience);
