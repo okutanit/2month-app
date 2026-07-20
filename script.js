@@ -4,18 +4,18 @@ const quizzes = [
     choices: ["1ヶ月", "2ヶ月", "100ヶ月"],
     answerIndex: 1,
     correctMessage: "さすが！2ヶ月記念やで♡",
-    wrongMessage: "正解は2ヶ月！ここは覚えといてな♡"
+    wrongMessage: "正解は2ヶ月！"
   },
   {
     question: "なーちゃんの彼氏は誰でしょう？",
-    choices: ["たくと", "大谷翔平", "カフェの店員さん"],
+    choices: ["たくと", "ぷん", "たっくん"],
     answerIndex: 0,
-    correctMessage: "正解！たくとです。これは落とせへんな♡",
-    wrongMessage: "正解はたくと！ライバル強すぎ問題。"
+    correctMessage: "正解！たくとです。間違ったらキレる",
+    wrongMessage: "正解はたくと！まあぷんでも許す"
   },
   {
     question: "これからふたりで一番増やしたいものは？",
-    choices: ["残業時間", "未読LINE", "楽しい思い出"],
+    choices: ["喧嘩", "未読LINE", "楽しい思い出"],
     answerIndex: 2,
     correctMessage: "大正解！これからもいっぱい作ろうな♡",
     wrongMessage: "正解は楽しい思い出！残業は増やさんでええ。"
@@ -26,22 +26,22 @@ const prizes = [
   {
     icon: "⚾",
     title: "野球観戦券",
-    description: "一緒に野球観戦へ。好きな球場と試合を選んで行こう。"
+    description: "一緒に野球観戦へ。阪神戦見に行こー。"
   },
   {
     icon: "✈️",
     title: "行きたい場所に旅行券",
-    description: "なーちゃんが行きたい場所へ、ふたりで旅行に行こう。"
+    description: "二人で行きたい場所へ、旅行に行こう。"
   },
   {
     icon: "🍽️",
     title: "ご飯おごり券（たくとが）",
-    description: "食べたいものを選んでな。今日はたくとがごちそうします。"
+    description: "食べたいものを選んでな。その日は俺がごちそうします。"
   },
   {
     icon: "☕",
     title: "カフェデート券（なーが奢る）",
-    description: "おしゃれなカフェでゆっくりデート。今日はなーちゃんがごちそうしてくれます。"
+    description: "おしゃれなカフェでゆっくりデート。その日はなーちゃんにごちそうしてもらうー。"
   },
   {
     icon: "🚗",
